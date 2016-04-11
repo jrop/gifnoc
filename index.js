@@ -3,16 +3,7 @@
 const path = require('path')
 const _merge = require('lodash.merge')
 
-function _req(file) {
-	try {
-		return require(file)
-	} catch (e) {
-		return { }
-	}
-}
-
 function findRequire(dir, name) {
-	dir = path.resolve(dir)
 	let up
 	while((up = path.dirname(dir)) != dir) {
 		try {
@@ -23,19 +14,31 @@ function findRequire(dir, name) {
 	}
 }
 
-module.exports = function loader(startDir) {
-	startDir = startDir || path.dirname(module.parent.filename)
+function cacheMiss(startDir) {
 	const configFile = findRequire(startDir, 'config')
 
 	if (configFile) {
-		const configMain = _req(configFile)
+		const configMain = require(configFile)
 		if (path.basename(configFile).startsWith('index.')) {
 			const env = process.env.NODE_ENV || 'development'
 			const envFile = findRequire(startDir, path.join('config', env))
 			if (envFile)
-				return _merge({}, configMain, _req(envFile))
+				return _merge({}, configMain, require(envFile))
 		}
-		return configMain
+		return _merge({}, configMain)
 	}
-	return { }
+	return false
 }
+
+module.exports = function loader(startDir) {
+	startDir = (startDir && path.resolve(startDir)) || path.dirname(require.main.filename)
+
+	let res = module.exports.cache[startDir]
+	if (res === undefined)
+		res = module.exports.cache[startDir] = cacheMiss(startDir)
+	if (res === false)
+		throw new Error(`Could not find config from: ${startDir}`)
+
+	return res
+}
+module.exports.cache = { }

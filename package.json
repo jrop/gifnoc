@@ -1,12 +1,14 @@
 {
   "name": "gifnoc",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "mocha './test/**/test.js'"
   },
-  "keywords": [],
+  "keywords": [
+    "config"
+  ],
   "author": "",
   "repository": "jrop/gifnoc",
   "license": "ISC",

@@ -7,6 +7,7 @@ const oldENV = process.env.NODE_ENV
 describe('config/index.js', () => {
 	afterEach(() => {
 		process.env.NODE_ENV = oldENV
+		gifnoc.cache = { }
 	})
 
 	it('should find index and dev config', () => {
