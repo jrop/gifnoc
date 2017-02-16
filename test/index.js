@@ -37,4 +37,7 @@ describe('config', function () {
 	it('should return undefined', function () {
 		assert.deepEqual(gifnoc('/'), undefined)
 	})
+	it('should fail if require throws', function () {
+		assert.throws(() => gifnoc(__dirname, {env: 'error'}), /Module load failed/)
+	})
 })

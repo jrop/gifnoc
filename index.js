@@ -4,6 +4,16 @@ const fs = require('fs')
 const _merge = require('lodash.merge')
 const path = require('path')
 
+function tryRequire(id) {
+	let exists = false
+	try {
+		require.resolve(id)
+		exists = true
+	} catch (e) {}
+	if (exists)
+		return require(id)
+}
+
 module.exports = function gifnoc(dir, options) {
 	dir = (dir && path.resolve(dir)) || path.dirname(require.main.filename)
 	options = Object.assign({
@@ -14,19 +24,17 @@ module.exports = function gifnoc(dir, options) {
 
 	do {
 		// try to load config at this location:
-		try {
-			const tryLoad = function(id) {
-				try {return require(id)}
-				catch (e) {return}
-			}
+		let rootConfig
+		try {rootConfig = tryRequire(path.join(dir, 'config'))} catch (e) {}
+
+		if (rootConfig) {
 			const paths = [
-				require.resolve(path.join(dir, 'config')),
 				path.join(dir, 'config', options.env),
 				path.join(dir, 'config', options.hostname),
 				path.join(dir, 'config', options.username),
 			]
-			return _merge({}, ...paths.map(tryLoad))
-		} catch (e) {}
+			return _merge({}, ...[rootConfig, ...paths.map(tryRequire)])
+		}
 
 		// could not find config: continue on
 		// cd ..:
