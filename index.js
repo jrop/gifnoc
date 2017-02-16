@@ -1,44 +1,37 @@
 'use strict'
 
-const path = require('path')
+const fs = require('fs')
 const _merge = require('lodash.merge')
+const path = require('path')
 
-function findRequire(dir, name) {
-	let up
-	while((up = path.dirname(dir)) != dir) {
+module.exports = function gifnoc(dir, options) {
+	dir = (dir && path.resolve(dir)) || path.dirname(require.main.filename)
+	options = Object.assign({
+		env: process.env.NODE_ENV || 'development',
+		hostname: require('os').hostname(),
+		username: require('os').userInfo().username,
+	}, options)
+
+	do {
+		// try to load config at this location:
 		try {
-			return require.resolve(path.join(dir, name))
-		} catch (e) {
-			dir = up
-		}
-	}
+			const tryLoad = function(id) {
+				try {return require(id)}
+				catch (e) {return}
+			}
+			const paths = [
+				require.resolve(path.join(dir, 'config')),
+				path.join(dir, 'config', options.env),
+				path.join(dir, 'config', options.hostname),
+				path.join(dir, 'config', options.username),
+			]
+			return _merge({}, ...paths.map(tryLoad))
+		} catch (e) {}
+
+		// could not find config: continue on
+		// cd ..:
+		const nextDir = path.dirname(dir)
+		if (dir == nextDir) break
+		dir = nextDir
+	} while (true)
 }
-
-function cacheMiss(startDir) {
-	const configFile = findRequire(startDir, 'config')
-
-	if (configFile) {
-		const configMain = require(configFile)
-		if (path.basename(configFile).startsWith('index.')) {
-			const env = process.env.NODE_ENV || 'development'
-			const envFile = findRequire(startDir, path.join('config', env))
-			if (envFile)
-				return _merge({}, configMain, require(envFile))
-		}
-		return _merge({}, configMain)
-	}
-	return false
-}
-
-module.exports = function loader(startDir) {
-	startDir = (startDir && path.resolve(startDir)) || path.dirname(require.main.filename)
-
-	let res = module.exports.cache[startDir]
-	if (res === undefined)
-		res = module.exports.cache[startDir] = cacheMiss(startDir)
-	if (res === false)
-		throw new Error(`Could not find config from: ${startDir}`)
-
-	return res
-}
-module.exports.cache = { }

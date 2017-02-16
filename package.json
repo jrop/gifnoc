@@ -1,11 +1,11 @@
 {
   "name": "gifnoc",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha './test/**/test.js'",
-    "coverage": "istanbul cover _mocha './test/**/test.js'"
+    "test": "mocha test/",
+    "coverage": "istanbul cover _mocha test/"
   },
   "keywords": [
     "config"

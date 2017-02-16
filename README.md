@@ -28,6 +28,8 @@ config/
 	index.js
 	development.js
 	production.js
+	USERNAME.js // loaded only when require('os').userInfo().username == USERNAME
+	HOSTNAME.js // loaded only when require('os').hostname() == HOSTNAME
 ```
 
 ## License
