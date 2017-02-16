@@ -1,5 +1,5 @@
 const assert = require('assert')
-const gifnoc = require('../index')
+const gifnoc = require('../')
 const path = require('path')
 
 describe('config', function () {

@@ -1,11 +1,15 @@
 {
   "name": "gifnoc",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
+    "build": "babel src/ -d lib/",
+    "buildw": "babel -w src/ -d lib/",
+    "clean": "rm -rf lib/",
     "test": "mocha test/",
-    "coverage": "istanbul cover _mocha test/"
+    "coverage": "istanbul cover _mocha test/",
+    "prepublish": "npm run build && npm test"
   },
   "keywords": [
     "config"
@@ -14,9 +18,12 @@
   "repository": "jrop/gifnoc",
   "license": "ISC",
   "dependencies": {
-    "lodash.merge": "^4.3.4"
+    "lodash.merge": "^4.3.4",
+    "user-info": "^1.0.0"
   },
   "devDependencies": {
+    "babel-cli": "^6.23.0",
+    "babel-preset-latest": "^6.22.0",
     "chai": "^3.5.0",
     "istanbul": "^0.4.3",
     "mocha": "^2.4.5"

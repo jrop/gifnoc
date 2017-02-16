@@ -3,6 +3,7 @@
 const fs = require('fs')
 const _merge = require('lodash.merge')
 const path = require('path')
+const userInfo = require('user-info')
 
 function tryRequire(id) {
 	let exists = false
@@ -19,7 +20,7 @@ module.exports = function gifnoc(dir, options) {
 	options = Object.assign({
 		env: process.env.NODE_ENV || 'development',
 		hostname: require('os').hostname(),
-		username: require('os').userInfo().username,
+		username: userInfo().username,
 	}, options)
 
 	do {
