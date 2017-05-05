@@ -5,12 +5,20 @@ gifnoc
 
 [![Build Status](https://travis-ci.org/jrop/gifnoc.svg?branch=master)](https://travis-ci.org/jrop/gifnoc)
 
-A small utility that searches up for the nearest `config/index.js` file, and loads the contained configuration.
+A small utility that searches up for the nearest `config/index.js` file, and loads the contained configuration, merging any other relevant files:
+
+* config/`NODE_ENV`.js
+* config/`hostname`.js
+* config/`username`.js
+* Environment variables starting with "config": `config.something.somethingElse=value`
+* CLI arguments starting with "--config": `--config.something.somethingElse=value`
 
 ## Installation
 
 ```sh
 npm install --save gifnoc
+# or
+yarn add gifnoc
 ```
 
 ## Use
@@ -19,23 +27,14 @@ npm install --save gifnoc
 const gifnoc = require('gifnoc')
 
 const config = gifnoc(__dirname) // pass in where to start looking
-```
-
-This utility will also merge in environment files based on `process.env.NODE_ENV`.  For example:
-
-```
-config/
-	index.js
-	development.js
-	production.js
-	USERNAME.js // loaded only when require('os').userInfo().username == USERNAME
-	HOSTNAME.js // loaded only when require('os').hostname() == HOSTNAME
+// or
+const config = gifnoc() // defaults to path.dirname(require.main.filename)
 ```
 
 ## License
 
 ISC License (ISC)
-Copyright (c) 2016, Jonathan Apodaca <jrapodaca@gmail.com>
+Copyright (c) 2017, Jonathan Apodaca <jrapodaca@gmail.com>
 
 Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.
 

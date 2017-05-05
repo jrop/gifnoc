@@ -1,9 +1,12 @@
 'use strict'
 
+const flat = require('flat')
 const fs = require('fs')
-const _merge = require('lodash.merge')
+const minimist = require('minimist')
 const path = require('path')
 const userInfo = require('user-info')
+const _merge = require('lodash.merge')
+const _set = require('lodash.set')
 
 function tryRequire(id) {
 	let exists = false
@@ -18,7 +21,9 @@ function tryRequire(id) {
 module.exports = function gifnoc(dir, options) {
 	dir = (dir && path.resolve(dir)) || path.dirname(require.main.filename)
 	options = Object.assign({
+		argv: process.argv.slice(2),
 		env: process.env.NODE_ENV || 'development',
+		envVars: process.env,
 		hostname: require('os').hostname(),
 		username: userInfo().username,
 	}, options)
@@ -29,12 +34,16 @@ module.exports = function gifnoc(dir, options) {
 		try {rootConfig = tryRequire(path.join(dir, 'config'))} catch (e) {}
 
 		if (rootConfig) {
-			const paths = [
-				path.join(dir, 'config', options.env),
-				path.join(dir, 'config', options.hostname),
-				path.join(dir, 'config', options.username),
-			]
-			return _merge({}, ...[rootConfig, ...paths.map(tryRequire)])
+			return _merge({}, ...[
+				rootConfig,
+				...[
+					tryRequire(path.join(dir, 'config', options.env)),
+					tryRequire(path.join(dir, 'config', options.hostname)),
+					tryRequire(path.join(dir, 'config', options.username)),
+				],
+				flat.unflatten(options.envVars).config,
+				minimist(options.argv).config,
+			])
 		}
 
 		// could not find config: continue on
