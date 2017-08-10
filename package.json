@@ -1,6 +1,6 @@
 {
   "name": "gifnoc",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -11,7 +11,14 @@
     "coverage": "istanbul cover _mocha test/",
     "prepublish": "npm run build && npm test"
   },
-  "keywords": ["config", "gifnoc", "env", "cli", "host", "user"],
+  "keywords": [
+    "config",
+    "gifnoc",
+    "env",
+    "cli",
+    "host",
+    "user"
+  ],
   "author": "",
   "repository": "jrop/gifnoc",
   "license": "ISC",
@@ -29,5 +36,7 @@
     "istanbul": "^0.4.3",
     "mocha": "^2.4.5"
   },
-  "files": ["lib/index.js"]
+  "files": [
+    "lib/index.js"
+  ]
 }
