@@ -30,9 +30,7 @@ module.exports = function gifnoc(dir, options) {
 
 	do {
 		// try to load config at this location:
-		let rootConfig
-		try {rootConfig = tryRequire(path.join(dir, 'config'))} catch (e) {}
-
+		const rootConfig = tryRequire(path.join(dir, 'config'))
 		if (rootConfig) {
 			return _merge({}, ...[
 				rootConfig,
